@@ -1,25 +1,31 @@
 package main
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
-	"github.com/shingravirei/swgo/handler"
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	r := gin.Default()
 
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"hello": "World",
-		})
-	})
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	client, ctx := connectDb()
+
+	env := &env{client, ctx}
+	defer env.closeClient()
 
 	api := r.Group("/api")
 	{
-		api.GET("/planet", handler.GetAllPlanets)
-		api.GET("/planet/search", handler.SearchPlanet)
-		api.POST("/planet", handler.AddPlanet)
-		api.DELETE("/planet/:id", handler.DeletePlanet)
+		api.GET("/planet", env.getAllPlanets)
+		api.GET("/planet/search", env.searchPlanet)
+		api.POST("/planet", env.addPlanet)
+		api.DELETE("/planet/:id", env.deletePlanet)
 
 	}
 
