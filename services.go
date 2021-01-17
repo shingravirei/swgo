@@ -33,10 +33,14 @@ func getJSON(url string, target interface{}) {
 	json.NewDecoder(r.Body).Decode(&target)
 }
 
-func getPlanetMovieCount(name string) uint {
+func getPlanetMovieCount(name string) int {
 	var p planets
 
 	getJSON(fmt.Sprintf("https://swapi.dev/api/planets?search=%s", name), &p)
 
-	return p.Count
+	if p.Count == 0 {
+		return 0
+	}
+
+	return len(p.Results[0].Films)
 }

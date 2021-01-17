@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -22,12 +24,12 @@ func main() {
 
 	api := r.Group("/api")
 	{
-		api.GET("/planet", env.getAllPlanets)
-		api.GET("/planet/search", env.searchPlanet)
-		api.POST("/planet", env.addPlanet)
-		api.DELETE("/planet/:id", env.deletePlanet)
+		api.GET("/planet", env.getAllPlanetsHandler)
+		api.GET("/planet/search", env.searchPlanetHandler)
+		api.POST("/planet", env.addPlanetHandler)
+		api.DELETE("/planet/:id", env.deletePlanetHandler)
 
 	}
 
-	r.Run(":3000")
+	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }
